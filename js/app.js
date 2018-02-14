@@ -1,7 +1,7 @@
 /*
  * Create a list that holds all of your cards
  */
-let array = [...document.getElementsByClassName('card')];
+// let array = [...document.getElementsByClassName('card')];
 
 // Display the cards on the page
 //   - shuffle the list of cards using the provided "shuffle" method below
@@ -32,14 +32,16 @@ function shuffle(array) {
 /*
  * set up the event listener for a card. If a card is clicked:
  *  - display the card's symbol (put this functionality in another function that you call from this one)
- * - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
+ *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
+ *  + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
+
 */
 
 
 let deck = document.querySelector('.deck');
-let open = document.getElementsByClassName('open');
+let open = document.getElementsByClassName('card open');
 let match = document.getElementsByClassName('match');
-let move = 0;
+let moveN = 0;
 
 function flipCard(evt) {
 	evt.target.classList.toggle('open');
@@ -51,50 +53,57 @@ function flipCard(evt) {
 /*  - if the list already has another card, check to see if the two cards match
  *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
  *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
+ *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
 */ 
 
+
 function matchCard() {
-	if (open.length === 2) {
+	if (open.length >= 2) {
 		if (open[0].innerHTML === open[1].innerHTML) {lock();}
 		else {unflip();}	
 	}
-	setTimeout(matchCard, 2000);
 }
 
 function lock() {	 	
-	for (i=0; i<2; i++) {
-		open[i].classList.add('match');
-		open[i].classList.remove('show');
+	while (open.length>0) {
+		open[0].classList.add('match');
+		open[0].classList.remove('show', 'open');
 	}	
-	open[0].classList.remove('open');
-	open[0].classList.remove('open');
 }
 
 function unflip() {
-	for (let i=0; i<2; i++) {
-		open[i].classList.remove('show');	
- 	}
- 	open[0].classList.remove('open');
- 	open[0].classList.remove('open');
+	while (open.length>0) {
+		open[0].classList.remove('show', 'open');
+	}
+}
+
+function printMove() {
+	const number = document.querySelector('.moves');
+	if (moveN <= 1) {
+		number.innerText = `${moveN} move`;
+	} else {
+		number.innerText = `${moveN} moves`;
+	}
 
 }
 
 function congrat() {
 	if (match.length === 16) {
-	alert(`Congratulations!You've used x steps!`)
+	alert(`Congratulations! You used ${moveN} steps to finish!`)
 	}
 }
 
-
-deck.addEventListener('click', function () {
-	deck.addEventListener('click', flipCard);
-	matchCard();
+deck.addEventListener('click', function (evt) {	
+	
+	if (evt.target.tagName === 'LI') {
+		setTimeout(flipCard(evt), 0);
+		moveN++;
+	}	
+	setTimeout(printMove, 0);
+	setTimeout(matchCard, 200);
+	setTimeout(congrat, 3000);
 });
-
-deck.addEventListener('click', congrat);
 
 
  
-/*    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
- *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
- */
+
