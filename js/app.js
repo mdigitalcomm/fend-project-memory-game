@@ -1,17 +1,21 @@
 /*
  * Create a list that holds all of your cards
  */
-// let array = [...document.getElementsByClassName('card')];
+let cards = Array.prototype.slice.call(document.getElementsByClassName('card'));
+const container = document.querySelector('.container')
+const restart = document.querySelector('.restart');
+let deck = document.getElementsByClassName('deck');
+let open = document.getElementsByClassName('card open');
+let match = document.getElementsByClassName('match');
+let moveN = 0;
 
-// Display the cards on the page
 //   - shuffle the list of cards using the provided "shuffle" method below
-
-
-//   - loop through each card and create its HTML
-
-
-//   - add each card's HTML to the page
-
+function reset() {
+	shuffle(cards);
+	unflipAll();
+	createNewCards();
+	moveN = 0;
+}
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -29,37 +33,40 @@ function shuffle(array) {
 }
 
 
-/*
- * set up the event listener for a card. If a card is clicked:
- *  - display the card's symbol (put this functionality in another function that you call from this one)
- *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
- *  + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
+//Unflip all open cards before reset
+function unflipAll() {
+	while (match.length>0) {
+		match[0].classList.remove('match');
+	}
+}
 
-*/
+function createNewCards() {
+	let newDeck = document.createElement('div');
 
-
-let deck = document.querySelector('.deck');
-let open = document.getElementsByClassName('card open');
-let match = document.getElementsByClassName('match');
-let moveN = 0;
-
-function flipCard(evt) {
-	evt.target.classList.toggle('open');
-	evt.target.classList.toggle('show');
-
+	//   - loop through each card and create its HTML
+	for (let i=0; i<cards.length; i++) {
+		let newCard = cards[i].outerHTML;
+		newDeck.insertAdjacentHTML('beforeend', newCard);	
+	}
+	//   - add each card's HTML to the page
+	deck[0].innerHTML = newDeck.innerHTML;	
 }
 
 
-/*  - if the list already has another card, check to see if the two cards match
- *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
- *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
- *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
-*/ 
+//- Set up event listener for a card, if clicked, display the card's symbol
+function flipCard(evt) {
+	evt.target.classList.toggle('open');
+	evt.target.classList.toggle('show');
+}
 
 
+// If 2 cards are open, check to see if the two cards match
 function matchCard() {
-	if (open.length >= 2) {
+	if (open.length = 2) {
+		//if the cards do match, lock the cards in the open position
 		if (open[0].innerHTML === open[1].innerHTML) {lock();}
+		
+		//  if the cards do not match, remove the cards from the list and hide the card's symbol
 		else {unflip();}	
 	}
 }
@@ -77,6 +84,7 @@ function unflip() {
 	}
 }
 
+//Display number of moves
 function printMove() {
 	const moves = document.querySelector('.moves');
 	if (moveN <= 1) {
@@ -87,13 +95,16 @@ function printMove() {
 
 }
 
+
+// If all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
 function congrat() {
 	if (match.length === 16) {
 	alert(`Congratulations! You used ${moveN} steps to finish!`)
 	}
 }
 
-deck.addEventListener('click', function (evt) {	
+
+container.addEventListener('click', function (evt) {	
 	
 	if (evt.target.tagName === 'LI') {
 		setTimeout(flipCard(evt), 0);
@@ -104,6 +115,4 @@ deck.addEventListener('click', function (evt) {
 	setTimeout(congrat, 3000);
 });
 
-
- 
-
+restart.addEventListener('click', reset);
