@@ -78,11 +78,11 @@ function unflip() {
 }
 
 function printMove() {
-	const number = document.querySelector('.moves');
+	const moves = document.querySelector('.moves');
 	if (moveN <= 1) {
-		number.innerText = `${moveN} move`;
+		moves.innerText = `${moveN} move`;
 	} else {
-		number.innerText = `${moveN} moves`;
+		moves.innerText = `${moveN} moves`;
 	}
 
 }
