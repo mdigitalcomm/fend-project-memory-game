@@ -36,7 +36,7 @@ function shuffle(array) {
 //Unflip all open cards before reset
 function unflipAll() {
 	while (match.length>0) {
-		match[0].classList.remove('match');
+		match[0].classList.remove('match', 'shake', 'bump');
 	}
 }
 
@@ -62,12 +62,26 @@ function flipCard(evt) {
 
 // If 2 cards are open, check to see if the two cards match
 function matchCard() {
-	if (open.length = 2) {
+	if (open.length >= 2) {
 		//if the cards do match, lock the cards in the open position
-		if (open[0].innerHTML === open[1].innerHTML) {lock();}
+		if (open[0].innerHTML === open[1].innerHTML) {
+			animate('bump');
+			setTimeout(lock, 300);
+		}
 		
 		//  if the cards do not match, remove the cards from the list and hide the card's symbol
-		else {unflip();}	
+		else {
+			animate('shake');
+			setTimeout(unflip, 300);
+		}		
+	} 
+}
+
+function animate(e) {
+	for (let i=0; i<2; i++) {
+	open[i].classList.remove(e);
+	void open[i].offsetWidth;
+	open[i].classList.add(e);
 	}
 }
 
@@ -111,7 +125,7 @@ container.addEventListener('click', function (evt) {
 		moveN++;
 	}	
 	setTimeout(printMove, 0);
-	setTimeout(matchCard, 200);
+	setTimeout(matchCard, 0);
 	setTimeout(congrat, 3000);
 });
 
