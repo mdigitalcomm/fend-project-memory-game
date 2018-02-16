@@ -1,7 +1,8 @@
 /*
  * Create a list that holds all of your cards
  */
-let cards = Array.prototype.slice.call(document.getElementsByClassName('card'));
+let card = document.getElementsByClassName('card');
+let cards = Array.prototype.slice.call(card);
 const container = document.querySelector('.container')
 const restart = document.querySelector('.restart');
 let deck = document.getElementsByClassName('deck');
@@ -11,10 +12,14 @@ let moveN = 0;
 
 //   - shuffle the list of cards using the provided "shuffle" method below
 function reset() {
-	shuffle(cards);
-	unflipAll();
-	createNewCards();
 	moveN = 0;
+	stars();
+	printMove();
+	stopTimer();
+	resetTimer();
+	unflipAll();
+	shuffle(cards);
+	createNewCards();	
 }
 
 // Shuffle function from http://stackoverflow.com/a/2450976
@@ -35,8 +40,8 @@ function shuffle(array) {
 
 //Unflip all open cards before reset
 function unflipAll() {
-	while (match.length>0) {
-		match[0].classList.remove('match', 'shake', 'bump');
+	for (let i=0; i<16; i++) {
+		card[i].classList.remove('match', 'open', 'show', 'shake', 'bump');
 	}
 }
 
@@ -62,19 +67,24 @@ function flipCard(evt) {
 
 // If 2 cards are open, check to see if the two cards match
 function matchCard() {
-	if (open.length >= 2) {
+	if (open.length === 2) {
+
 		//if the cards do match, lock the cards in the open position
+		// if (open[0].innerHTML === open[1].innerHTML) {
 		if (open[0].innerHTML === open[1].innerHTML) {
 			animate('bump');
-			setTimeout(lock, 300);
-		}
+			setTimeout(lock, 0);
 		
 		//  if the cards do not match, remove the cards from the list and hide the card's symbol
-		else {
+		} else {
 			animate('shake');
-			setTimeout(unflip, 300);
-		}		
-	} 
+			setTimeout(unflip, 500);	
+
+		}
+		moveN++;	
+			
+	}
+		
 }
 
 function animate(e) {
@@ -86,10 +96,10 @@ function animate(e) {
 }
 
 function lock() {	 	
-	while (open.length>0) {
-		open[0].classList.add('match');
-		open[0].classList.remove('show', 'open');
-	}	
+		while (open.length>0) {
+			open[0].classList.add('match');
+			open[0].classList.remove('show', 'open');
+		}		
 }
 
 function unflip() {
@@ -109,23 +119,94 @@ function printMove() {
 
 }
 
+//Set stars according to number of moves
+let starN = document.querySelector('.stars').children;
+function stars () {
+	const fullStar = "<i class= 'fa fa-star'>";
+	const halfStar = "<i class= 'fa fa-star-half-o'>";
+	const emStar = "<i class='fa fa-star-o'>";
+	if (moveN >= 0) {
+		for (let i=0; i<3; i++) {
+			starN[i].innerHTML = fullStar
+		}
+		if (moveN > 15) {
+			// 2.5 stars
+			starN[2].innerHTML = halfStar;
+			//2 stars
+			if (moveN > 30) {
+				starN[2].innerHTML = emStar;
+				//1.5 stars
+				if (moveN > 40) {
+					starN[1].innerHTML = halfStar;
+					if (moveN > 50) {
+						starN[1].innerHTML = emStar;
+					}
+				}
+			}
+		}
+	}	
+}
+
+
+//Display timer
+let displayTime = document.getElementsByClassName('time')[0];
+let minutes = 0, seconds = 0;
+let t;
+let timerOn = 0;
+function timer() {
+	displayTime.textContent = (minutes > 9 ? minutes : `0${minutes}`) + ":" + (seconds > 9 ? seconds : `0${seconds}`);
+
+	seconds++;
+	secToMin();
+	t =	setTimeout(function() { timer(); }, 1000);
+	
+}
+
+function secToMin() {
+	if (seconds >= 60) {
+		seconds = 0;
+		minutes++;	
+	}
+}
+
+function startTimer() {
+	if (!timerOn) {
+		timerOn = 1;
+		timer();
+	}
+}
+function stopTimer() {
+	clearTimeout(t);
+	timerOn = 0;
+}
+
+
+function resetTimer() {
+	seconds = 0;
+	minutes = 0;
+	displayTime.textContent = "00:00";
+
+}
 
 // If all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
 function congrat() {
 	if (match.length === 16) {
-	alert(`Congratulations! You used ${moveN} steps to finish!`)
+		stopTimer();
+		if(confirm(`Congratulations! You used ${minutes} ` + (minutes > 1 ? "minutes" : "minute") + ` ${seconds} ` + (seconds > 1 ? "seconds " : "second ") + `with ${moveN} steps to finish! Have another round?`)) {
+			reset();
+		} 
 	}
 }
 
 
-container.addEventListener('click', function (evt) {	
-	
+container.addEventListener('click', function (evt) {		
 	if (evt.target.tagName === 'LI') {
 		setTimeout(flipCard(evt), 0);
-		moveN++;
+		startTimer();
 	}	
-	setTimeout(printMove, 0);
 	setTimeout(matchCard, 0);
+	setTimeout(printMove, 500);
+	setTimeout(stars, 0);
 	setTimeout(congrat, 3000);
 });
 
