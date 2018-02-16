@@ -39,8 +39,17 @@ h1 {
 
 .fa-star,
 .fa-star-o,
-.fa-star-half-o {
+.fa-star-half-o,
+.fa-clock-o {
     color: gold;
+}
+
+.timer {
+    margin-left: 15px;
+}
+
+.time {
+    padding-left: 5px;
 }
 
 .deck {
