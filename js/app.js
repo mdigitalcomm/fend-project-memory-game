@@ -189,13 +189,16 @@ function resetTimer() {
 }
 
 // If all cards have matched, display a message with the final score in a modal
-const modal = document.getElementById('myModal');
-let span = document.getElementsByClassName('close')[0];
-let modalOn = 0;
-let showStars = document.getElementsByClassName('showStars')[0];
-let starList = document.getElementsByClassName('stars')[0];
-let timeUsed = document.getElementsByClassName('timeUsed')[0];
-let movesText = document.getElementsByClassName('movesText')[0];
+const modal = document.getElementById('myModal'),
+	cancel = document.getElementById('cancel'),
+	replay = document.getElementById('replay');
+
+let span = document.getElementsByClassName('close')[0],
+	modalOn = 0,
+	showStars = document.getElementsByClassName('showStars')[0],
+	starList = document.getElementsByClassName('stars')[0],
+	timeUsed = document.getElementsByClassName('timeUsed')[0],
+ 	movesText = document.getElementsByClassName('movesText')[0];
 
 function showModal() {
 	if (match.length === 16) {
@@ -204,6 +207,7 @@ function showModal() {
 	}
 }
 
+//Set content of the modal
 function printModal() {
 	modal.style.display = "block";
 	showStars.innerHTML = starList.innerHTML;
@@ -215,11 +219,23 @@ function closeModal() {
 	modal.style.display = "none";
 }
 
+//Close modal when click on the modal screen
 window.onclick = function(e) {
 	if (e.target == modal) {
 		closeModal();
 	}
 }
+
+//Click replay again to shuffle cards to start a new game
+replay.onclick = function() {
+	closeModal();
+	reset();
+}
+
+//Click cancel to close modal
+cancel.onclick = function() {
+	closeModal();
+} 
 
 container.addEventListener('click', function (evt) {		
 	if (evt.target.tagName === 'LI') {
@@ -235,3 +251,4 @@ container.addEventListener('click', function (evt) {
 
 restart.addEventListener('click', reset);
 span.addEventListener('click', closeModal);
+
