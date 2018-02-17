@@ -41,7 +41,13 @@ function shuffle(array) {
 //Unflip all open cards before reset
 function unflipAll() {
 	for (let i=0; i<16; i++) {
-		card[i].classList.remove('match', 'open', 'show', 'shake', 'bump');
+		card[i].classList.remove('match', 'open', 'show', 'shake');
+	}
+}
+
+function flipAll() {
+	for (let i=0; i<16; i++) {
+		card[i].classList.add('match');
 	}
 }
 
@@ -53,7 +59,7 @@ function createNewCards() {
 		let newCard = cards[i].outerHTML;
 		newDeck.insertAdjacentHTML('beforeend', newCard);	
 	}
-	//   - add each card's HTML to the page
+	//   - add all cards' HTML to the page
 	deck[0].innerHTML = newDeck.innerHTML;	
 }
 
@@ -70,21 +76,17 @@ function matchCard() {
 	if (open.length === 2) {
 
 		//if the cards do match, lock the cards in the open position
-		// if (open[0].innerHTML === open[1].innerHTML) {
-		if (open[0].innerHTML === open[1].innerHTML) {
-			animate('bump');
-			setTimeout(lock, 0);
-		
+		if (open[0].innerHTML === open[1].innerHTML) {	
+			setTimeout(lock, 200);
+			animate('enlarge');
 		//  if the cards do not match, remove the cards from the list and hide the card's symbol
 		} else {
 			animate('shake');
-			setTimeout(unflip, 500);	
+			setTimeout(unflip, 300);	
 
 		}
-		moveN++;	
-			
+		moveN++;				
 	}
-		
 }
 
 function animate(e) {
@@ -116,7 +118,6 @@ function printMove() {
 	} else {
 		moves.innerText = `${moveN} moves`;
 	}
-
 }
 
 //Set stars according to number of moves
@@ -129,16 +130,16 @@ function stars () {
 		for (let i=0; i<3; i++) {
 			starN[i].innerHTML = fullStar
 		}
-		if (moveN > 15) {
+		if (moveN > 13) {
 			// 2.5 stars
 			starN[2].innerHTML = halfStar;
 			//2 stars
-			if (moveN > 30) {
+			if (moveN > 20) {
 				starN[2].innerHTML = emStar;
 				//1.5 stars
-				if (moveN > 40) {
+				if (moveN > 30) {
 					starN[1].innerHTML = halfStar;
-					if (moveN > 50) {
+					if (moveN > 40) {
 						starN[1].innerHTML = emStar;
 					}
 				}
@@ -155,13 +156,13 @@ let t;
 let timerOn = 0;
 function timer() {
 	displayTime.textContent = (minutes > 9 ? minutes : `0${minutes}`) + ":" + (seconds > 9 ? seconds : `0${seconds}`);
-
 	seconds++;
 	secToMin();
 	t =	setTimeout(function() { timer(); }, 1000);
 	
 }
 
+//Turn seconds to minutes
 function secToMin() {
 	if (seconds >= 60) {
 		seconds = 0;
@@ -175,39 +176,79 @@ function startTimer() {
 		timer();
 	}
 }
+
 function stopTimer() {
 	clearTimeout(t);
 	timerOn = 0;
 }
 
-
 function resetTimer() {
 	seconds = 0;
 	minutes = 0;
 	displayTime.textContent = "00:00";
-
 }
 
-// If all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
-function congrat() {
+// If all cards have matched, display a message with the final score in a modal
+const modal = document.getElementById('myModal'),
+	cancel = document.getElementById('cancel'),
+	replay = document.getElementById('replay');
+
+let span = document.getElementsByClassName('close')[0],
+	modalOn = 0,
+	showStars = document.getElementsByClassName('showStars')[0],
+	starList = document.getElementsByClassName('stars')[0],
+	timeUsed = document.getElementsByClassName('timeUsed')[0],
+ 	movesText = document.getElementsByClassName('movesText')[0];
+
+function showModal() {
 	if (match.length === 16) {
 		stopTimer();
-		if(confirm(`Congratulations! You used ${minutes} ` + (minutes > 1 ? "minutes" : "minute") + ` ${seconds} ` + (seconds > 1 ? "seconds " : "second ") + `with ${moveN} steps to finish! Have another round?`)) {
-			reset();
-		} 
+		printModal();
 	}
 }
 
+//Set content of the modal
+function printModal() {
+	modal.style.display = "block";
+	showStars.innerHTML = starList.innerHTML;
+		timeUsed.textContent = displayTime.textContent;
+		movesText.textContent = `${moveN}`;
+}
+
+function closeModal() {
+	modal.style.display = "none";
+}
+
+//Close modal when click on the modal screen
+window.onclick = function(e) {
+	if (e.target == modal) {
+		closeModal();
+	}
+}
+
+//Click replay again to shuffle cards to start a new game
+replay.onclick = function() {
+	closeModal();
+	reset();
+}
+
+//Click cancel to close modal
+cancel.onclick = function() {
+	closeModal();
+} 
 
 container.addEventListener('click', function (evt) {		
 	if (evt.target.tagName === 'LI') {
 		setTimeout(flipCard(evt), 0);
 		startTimer();
-	}	
+		
 	setTimeout(matchCard, 0);
 	setTimeout(printMove, 500);
 	setTimeout(stars, 0);
-	setTimeout(congrat, 3000);
+	setTimeout(showModal, 2000);
+	}
 });
 
 restart.addEventListener('click', reset);
+span.addEventListener('click', closeModal);
+
