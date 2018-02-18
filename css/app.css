@@ -138,6 +138,10 @@ h1 {
     animation: spin 1s;
 }
 
+/*
+ * Animation effects for card match
+ */
+
 @keyframes shake {
     10% {
         transform: translate3d(-25px, 0, 0);
@@ -167,6 +171,9 @@ h1 {
     }
 }
 
+/*
+ * Styles for the popup modal
+ */
 .modal {
     display: none;
     position: fixed;
@@ -187,7 +194,6 @@ h1 {
     border: 1px solid #666;
     border-radius: 10px;
     width: 50%;
-    /*height: 60%;*/
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
     animation: animatetop 0.4s;
     text-align: center;
@@ -271,6 +277,7 @@ h1 {
     cursor: pointer;
 }
 
+//Adjust to different screen sizes
 @media screen and (max-width: 700px) {
     .score-panel {
     width: 75%;
