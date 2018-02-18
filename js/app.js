@@ -89,6 +89,8 @@ function matchCard() {
 	}
 }
 
+
+//Keep the animation effects when the game board is reshuffled
 function animate(e) {
 	for (let i=0; i<2; i++) {
 	open[i].classList.remove(e);
@@ -97,6 +99,7 @@ function animate(e) {
 	}
 }
 
+//Lock cards when they match
 function lock() {	 	
 		while (open.length>0) {
 			open[0].classList.add('match');
@@ -104,6 +107,7 @@ function lock() {
 		}		
 }
 
+//Unflip cards when they don't match
 function unflip() {
 	while (open.length>0) {
 		open[0].classList.remove('show', 'open');
