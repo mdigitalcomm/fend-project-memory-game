@@ -66,8 +66,8 @@ function createNewCards() {
 
 //- Set up event listener for a card, if clicked, display the card's symbol
 function flipCard(evt) {
-	evt.target.classList.toggle('open');
-	evt.target.classList.toggle('show');
+	evt.target.classList.add('open');
+	evt.target.classList.add('show');
 }
 
 
