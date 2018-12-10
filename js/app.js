@@ -1,7 +1,7 @@
 /*
  * Create a list that holds all of your cards
  */
-let card = document.getElementsByClassName('card');
+const card = document.getElementsByClassName('card');
 let cards = Array.prototype.slice.call(card);
 const container = document.querySelector('.container')
 const restart = document.querySelector('.restart');
@@ -19,7 +19,7 @@ function reset() {
 	resetTimer();
 	unflipAll();
 	shuffle(cards);
-	createNewCards();	
+	createNewCards();
 }
 
 // Shuffle function from http://stackoverflow.com/a/2450976
@@ -41,8 +41,13 @@ function shuffle(array) {
 //Unflip all open cards before reset
 function unflipAll() {
 	for (let i=0; i<16; i++) {
-		card[i].classList.remove('match', 'open', 'show', 'shake');
+		card[i].classList.remove('match', 'open', 'show', 'shake','enlarge');
 	}
+	// Add container animation effect
+	container.classList.remove('enlarge');
+	void container.offsetWidth;
+	container.classList.add('enlarge');
+
 }
 
 function flipAll() {
@@ -57,10 +62,10 @@ function createNewCards() {
 	//   - loop through each card and create its HTML
 	for (let i=0; i<cards.length; i++) {
 		let newCard = cards[i].outerHTML;
-		newDeck.insertAdjacentHTML('beforeend', newCard);	
+		newDeck.insertAdjacentHTML('beforeend', newCard);
 	}
 	//   - add all cards' HTML to the page
-	deck[0].innerHTML = newDeck.innerHTML;	
+	deck[0].innerHTML = newDeck.innerHTML;
 }
 
 
@@ -76,23 +81,23 @@ function matchCard() {
 	if (open.length === 2) {
 
 		//if the cards do match, lock the cards in the open position
-		if (open[0].innerHTML === open[1].innerHTML) {	
+		if (open[0].innerHTML === open[1].innerHTML) {
 			setTimeout(lock, 200);
 			animate('enlarge');
 		//  if the cards do not match, remove the cards from the list and hide the card's symbol
 		} else {
 			animate('shake');
-			setTimeout(unflip, 300);	
+			setTimeout(unflip, 300);
 
 		}
-		moveN++;				
+		moveN++;
 	}
 }
 
 
 //Keep the animation effects when the game board is reshuffled
 function animate(e) {
-	for (let i=0; i<2; i++) {
+	for (let i=0; i<open.length; i++) {
 	open[i].classList.remove(e);
 	void open[i].offsetWidth;
 	open[i].classList.add(e);
@@ -100,11 +105,11 @@ function animate(e) {
 }
 
 //Lock cards when they match
-function lock() {	 	
+function lock() {
 		while (open.length>0) {
 			open[0].classList.add('match');
 			open[0].classList.remove('show', 'open');
-		}		
+		}
 }
 
 //Unflip cards when they don't match
@@ -149,7 +154,7 @@ function stars () {
 				}
 			}
 		}
-	}	
+	}
 }
 
 
@@ -163,14 +168,14 @@ function timer() {
 	seconds++;
 	secToMin();
 	t =	setTimeout(function() { timer(); }, 1000);
-	
+
 }
 
 //Turn seconds to minutes
 function secToMin() {
 	if (seconds >= 60) {
 		seconds = 0;
-		minutes++;	
+		minutes++;
 	}
 }
 
@@ -239,13 +244,13 @@ replay.onclick = function() {
 //Click cancel to close modal
 cancel.onclick = function() {
 	closeModal();
-} 
+}
 
-container.addEventListener('click', function (evt) {		
+container.addEventListener('click', function (evt) {
 	if (evt.target.tagName === 'LI') {
 		setTimeout(flipCard(evt), 0);
 		startTimer();
-		
+
 	setTimeout(matchCard, 0);
 	setTimeout(printMove, 500);
 	setTimeout(stars, 0);
@@ -255,4 +260,3 @@ container.addEventListener('click', function (evt) {
 
 restart.addEventListener('click', reset);
 span.addEventListener('click', closeModal);
-
