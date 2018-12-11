@@ -10,8 +10,26 @@ let open = document.getElementsByClassName('card open');
 let match = document.getElementsByClassName('match');
 let moveN = 0;
 
+// class cards {
+// 	constructor() {
+//
+// 	}
+//
+// }
+//
+// class star {
+//
+// }
+//
+// class timer {
+//
+// }
+//
+// class modal {
+//
+// }
 //   - shuffle the list of cards using the provided "shuffle" method below
-function reset() {
+reset = () => {
 	moveN = 0;
 	stars();
 	printMove();
@@ -23,7 +41,7 @@ function reset() {
 }
 
 // Shuffle function from http://stackoverflow.com/a/2450976
-function shuffle(array) {
+shuffle = array => {
     var currentIndex = array.length, temporaryValue, randomIndex;
 
     while (currentIndex !== 0) {
@@ -39,7 +57,7 @@ function shuffle(array) {
 
 
 //Unflip all open cards before reset
-function unflipAll() {
+unflipAll = () => {
 	for (let i=0; i<16; i++) {
 		card[i].classList.remove('match', 'open', 'show', 'shake','enlarge');
 	}
@@ -50,13 +68,13 @@ function unflipAll() {
 
 }
 
-function flipAll() {
+flipAll = () => {
 	for (let i=0; i<16; i++) {
 		card[i].classList.add('match');
 	}
 }
 
-function createNewCards() {
+createNewCards = () => {
 	let newDeck = document.createElement('div');
 
 	//   - loop through each card and create its HTML
@@ -70,14 +88,14 @@ function createNewCards() {
 
 
 //- Set up event listener for a card, if clicked, display the card's symbol
-function flipCard(evt) {
+flipCard = (evt) => {
 	evt.target.classList.add('open');
 	evt.target.classList.add('show');
 }
 
 
 // If 2 cards are open, check to see if the two cards match
-function matchCard() {
+matchCard = () => {
 	if (open.length === 2) {
 
 		//if the cards do match, lock the cards in the open position
@@ -96,7 +114,7 @@ function matchCard() {
 
 
 //Keep the animation effects when the game board is reshuffled
-function animate(e) {
+animate = (e) => {
 	for (let i=0; i<open.length; i++) {
 	open[i].classList.remove(e);
 	void open[i].offsetWidth;
@@ -105,7 +123,7 @@ function animate(e) {
 }
 
 //Lock cards when they match
-function lock() {
+lock = () => {
 		while (open.length>0) {
 			open[0].classList.add('match');
 			open[0].classList.remove('show', 'open');
@@ -113,14 +131,14 @@ function lock() {
 }
 
 //Unflip cards when they don't match
-function unflip() {
+unflip = () => {
 	while (open.length>0) {
 		open[0].classList.remove('show', 'open');
 	}
 }
 
 //Display number of moves
-function printMove() {
+printMove = () => {
 	const moves = document.querySelector('.moves');
 	if (moveN <= 1) {
 		moves.innerText = `${moveN} move`;
@@ -131,7 +149,7 @@ function printMove() {
 
 //Set stars according to number of moves
 let starN = document.querySelector('.stars').children;
-function stars () {
+stars = () => {
 	const fullStar = "<i class= 'fa fa-star'>";
 	const halfStar = "<i class= 'fa fa-star-half-o'>";
 	const emStar = "<i class='fa fa-star-o'>";
@@ -163,7 +181,7 @@ let displayTime = document.getElementsByClassName('time')[0];
 let minutes = 0, seconds = 0;
 let t;
 let timerOn = 0;
-function timer() {
+timer = () => {
 	displayTime.textContent = (minutes > 9 ? minutes : `0${minutes}`) + ":" + (seconds > 9 ? seconds : `0${seconds}`);
 	seconds++;
 	secToMin();
@@ -172,26 +190,26 @@ function timer() {
 }
 
 //Turn seconds to minutes
-function secToMin() {
+secToMin = () => {
 	if (seconds >= 60) {
 		seconds = 0;
 		minutes++;
 	}
 }
 
-function startTimer() {
+startTimer = () => {
 	if (!timerOn) {
 		timerOn = 1;
 		timer();
 	}
 }
 
-function stopTimer() {
+stopTimer = () => {
 	clearTimeout(t);
 	timerOn = 0;
 }
 
-function resetTimer() {
+resetTimer = () => {
 	seconds = 0;
 	minutes = 0;
 	displayTime.textContent = "00:00";
@@ -209,7 +227,7 @@ let span = document.getElementsByClassName('close')[0],
 	timeUsed = document.getElementsByClassName('timeUsed')[0],
  	movesText = document.getElementsByClassName('movesText')[0];
 
-function showModal() {
+showModal = () => {
 	if (match.length === 16) {
 		stopTimer();
 		printModal();
@@ -217,34 +235,35 @@ function showModal() {
 }
 
 //Set content of the modal
-function printModal() {
+printModal = () => {
 	modal.style.display = "block";
 	showStars.innerHTML = starList.innerHTML;
-		timeUsed.textContent = displayTime.textContent;
-		movesText.textContent = `${moveN}`;
+	timeUsed.textContent = displayTime.textContent;
+	movesText.textContent = `${moveN}`;
 }
 
-function closeModal() {
+closeModal = () => {
 	modal.style.display = "none";
 }
 
 //Close modal when click on the modal screen
-window.onclick = function(e) {
+window.onclick = (e) => {
 	if (e.target == modal) {
 		closeModal();
 	}
 }
 
 //Click replay again to shuffle cards to start a new game
-replay.onclick = function() {
+replay.onclick = () => {
 	closeModal();
 	reset();
 }
 
 //Click cancel to close modal
-cancel.onclick = function() {
+cancel.onclick = () => {
 	closeModal();
 }
+
 
 container.addEventListener('click', function (evt) {
 	if (evt.target.tagName === 'LI') {
