@@ -1,4 +1,5 @@
- const game = {
+/*Main Game functions*/
+const game = {
 	 moveN: 0,
 	 ui: {
 		 card: document.getElementsByClassName('card'),
@@ -155,46 +156,51 @@ stars = () => {
 	}
 }
 
+/* Timer functions */
+//Display a timer on the screen
 
-//Display timer
-let minutes = 0, seconds = 0;
-let t;
-let timerOn = 0;
+let timerVariables = {
+  minutes: 0,
+  seconds: 0,
+  t: null,
+  timerOn: 0
+}
 
 timer = () => {
-	game.ui.displayTime.textContent = (minutes > 9 ? minutes : `0${minutes}`) + ":" + (seconds > 9 ? seconds : `0${seconds}`);
-	seconds++;
+	game.ui.displayTime.textContent = (timerVariables.minutes > 9 ? timerVariables.minutes : `0${timerVariables.minutes}`) + ":" + (timerVariables.seconds > 9 ? timerVariables.seconds : `0${timerVariables.seconds}`);
+	timerVariables.seconds++;
 	secToMin();
-	t =	setTimeout(() => { timer(); }, 1000);
+	timerVariables.t =	setTimeout(() => { timer(); }, 1000);
 
 }
 
 //Turn seconds to minutes
 secToMin = () => {
-	if (seconds >= 60) {
-		seconds = 0;
-		minutes++;
+	if (timerVariables.seconds >= 60) {
+		timerVariables.seconds = 0;
+		timerVariables.minutes++;
 	}
 }
 
 startTimer = () => {
-	if (!timerOn) {
-		timerOn = 1;
+	if (!timerVariables.timerOn) {
+		timerVariables.timerOn = 1;
 		timer();
 	}
 }
 
 stopTimer = () => {
-	clearTimeout(t);
-	timerOn = 0;
+	clearTimeout(timerVariables.t);
+	timerVariables.timerOn = 0;
 }
 
 resetTimer = () => {
-	seconds = 0;
-	minutes = 0;
+	timerVariables.seconds = 0;
+	timerVariables.minutes = 0;
 	game.ui.displayTime.textContent = "00:00";
 }
 
+/* Modal functions */
 // If all cards have matched, display a message with the final score in a modal
 const modal = {
 	modalOn: 0,
@@ -230,7 +236,7 @@ closeModal = () => {
 	modal.ui.myModal.style.display = "none";
 }
 
-
+/*Click events of the app*/
 //Click replay again to shuffle cards to start a new game
 modal.ui.replay.onclick = () => {
 	closeModal();
