@@ -1,42 +1,24 @@
-/*
- * Create a list that holds all of your cards
- */
-const card = document.getElementsByClassName('card');
-let cards = Array.prototype.slice.call(card);
-const container = document.querySelector('.container')
-const restart = document.querySelector('.restart');
-let deck = document.getElementsByClassName('deck');
-let open = document.getElementsByClassName('card open');
-let match = document.getElementsByClassName('match');
-let moveN = 0;
+ const game = {
+	 moveN: 0,
+	 ui: {
+		 card: document.getElementsByClassName('card'),
+		 deck: document.getElementsByClassName('deck'),
+		 open: document.getElementsByClassName('card open'),
+		 match: document.getElementsByClassName('match'),
+		 container: document.querySelector('.container'),
+		 restart: document.querySelector('.restart'),
+		 starN: document.querySelector('.stars').children,
+		 displayTime: document.getElementsByClassName('time')[0]
+	 }
+ }
 
-// class cards {
-// 	constructor() {
-//
-// 	}
-//
-// }
-//
-// class star {
-//
-// }
-//
-// class timer {
-//
-// }
-//
-// class modal {
-//
-// }
-//   - shuffle the list of cards using the provided "shuffle" method below
 reset = () => {
-	moveN = 0;
+	const cards = Array.prototype.slice.call(game.ui.card)
+	game.moveN = 0;
 	stars();
-	printMove();
-	stopTimer();
 	resetTimer();
+	printMove();
 	unflipAll();
-	shuffle(cards);
 	createNewCards();
 }
 
@@ -51,7 +33,6 @@ shuffle = array => {
         array[currentIndex] = array[randomIndex];
         array[randomIndex] = temporaryValue;
     }
-
     return array;
 }
 
@@ -59,33 +40,33 @@ shuffle = array => {
 //Unflip all open cards before reset
 unflipAll = () => {
 	for (let i=0; i<16; i++) {
-		card[i].classList.remove('match', 'open', 'show', 'shake','enlarge');
+		game.ui.card[i].classList.remove('match', 'open', 'show', 'shake','enlarge');
 	}
 	// Add container animation effect
-	container.classList.remove('enlarge');
-	void container.offsetWidth;
-	container.classList.add('enlarge');
+	game.ui.container.classList.remove('enlarge');
+	void game.ui.container.offsetWidth;
+	game.ui.container.classList.add('enlarge');
 
 }
 
 flipAll = () => {
 	for (let i=0; i<16; i++) {
-		card[i].classList.add('match');
+		game.ui.card[i].classList.add('match');
 	}
 }
 
 createNewCards = () => {
 	let newDeck = document.createElement('div');
-
+	let cards = Array.prototype.slice.call(game.ui.card)
+	shuffle(cards);
 	//   - loop through each card and create its HTML
-	for (let i=0; i<cards.length; i++) {
-		let newCard = cards[i].outerHTML;
+	cards.map(card => {
+		let newCard = card.outerHTML;
 		newDeck.insertAdjacentHTML('beforeend', newCard);
-	}
-	//   - add all cards' HTML to the page
-	deck[0].innerHTML = newDeck.innerHTML;
+		//   - add all cards' HTML to the page
+		game.ui.deck[0].innerHTML = newDeck.innerHTML;
+	});
 }
-
 
 //- Set up event listener for a card, if clicked, display the card's symbol
 flipCard = (evt) => {
@@ -96,10 +77,10 @@ flipCard = (evt) => {
 
 // If 2 cards are open, check to see if the two cards match
 matchCard = () => {
-	if (open.length === 2) {
+	if (game.ui.open.length === 2) {
 
 		//if the cards do match, lock the cards in the open position
-		if (open[0].innerHTML === open[1].innerHTML) {
+		if (game.ui.open[0].innerHTML === game.ui.open[1].innerHTML) {
 			setTimeout(lock, 200);
 			animate('enlarge');
 		//  if the cards do not match, remove the cards from the list and hide the card's symbol
@@ -108,66 +89,65 @@ matchCard = () => {
 			setTimeout(unflip, 300);
 
 		}
-		moveN++;
+		game.moveN++;
 	}
 }
 
 
 //Keep the animation effects when the game board is reshuffled
 animate = (e) => {
-	for (let i=0; i<open.length; i++) {
-	open[i].classList.remove(e);
-	void open[i].offsetWidth;
-	open[i].classList.add(e);
+	for (let i=0; i<game.ui.open.length; i++) {
+	game.ui.open[i].classList.remove(e);
+	void game.ui.open[i].offsetWidth;
+	game.ui.open[i].classList.add(e);
 	}
 }
 
 //Lock cards when they match
 lock = () => {
-		while (open.length>0) {
-			open[0].classList.add('match');
-			open[0].classList.remove('show', 'open');
+		while (game.ui.open.length>0) {
+			game.ui.open[0].classList.add('match');
+			game.ui.open[0].classList.remove('show', 'open');
 		}
 }
 
 //Unflip cards when they don't match
 unflip = () => {
-	while (open.length>0) {
-		open[0].classList.remove('show', 'open');
+	while (game.ui.open.length>0) {
+		game.ui.open[0].classList.remove('show', 'open');
 	}
 }
 
 //Display number of moves
 printMove = () => {
 	const moves = document.querySelector('.moves');
-	if (moveN <= 1) {
-		moves.innerText = `${moveN} move`;
+	if (game.moveN <= 1) {
+		moves.innerText = `${game.moveN} move`;
 	} else {
-		moves.innerText = `${moveN} moves`;
+		moves.innerText = `${game.moveN} moves`;
 	}
 }
 
 //Set stars according to number of moves
-let starN = document.querySelector('.stars').children;
 stars = () => {
 	const fullStar = "<i class= 'fa fa-star'>";
 	const halfStar = "<i class= 'fa fa-star-half-o'>";
 	const emStar = "<i class='fa fa-star-o'>";
-	if (moveN >= 0) {
+	if (game.moveN >= 0) {
 		for (let i=0; i<3; i++) {
-			starN[i].innerHTML = fullStar
+			game.ui.starN[i].innerHTML = fullStar
 		}
-		if (moveN > 13) {
+		if (game.moveN > 13) {
 			// 2.5 stars
-			starN[2].innerHTML = halfStar;
+			game.ui.starN[2].innerHTML = halfStar;
 			//2 stars
-			if (moveN > 20) {
-				starN[2].innerHTML = emStar;
+			if (game.moveN > 20) {
+				game.ui.starN[2].innerHTML = emStar;
 				//1.5 stars
-				if (moveN > 30) {
-					starN[1].innerHTML = halfStar;
-					if (moveN > 40) {
-						starN[1].innerHTML = emStar;
+				if (game.moveN > 30) {
+					game.ui.starN[1].innerHTML = halfStar;
+					if (game.moveN > 40) {
+						game.ui.starN[1].innerHTML = emStar;
 					}
 				}
 			}
@@ -177,15 +157,15 @@ stars = () => {
 
 
 //Display timer
-let displayTime = document.getElementsByClassName('time')[0];
 let minutes = 0, seconds = 0;
 let t;
 let timerOn = 0;
+
 timer = () => {
-	displayTime.textContent = (minutes > 9 ? minutes : `0${minutes}`) + ":" + (seconds > 9 ? seconds : `0${seconds}`);
+	game.ui.displayTime.textContent = (minutes > 9 ? minutes : `0${minutes}`) + ":" + (seconds > 9 ? seconds : `0${seconds}`);
 	seconds++;
 	secToMin();
-	t =	setTimeout(function() { timer(); }, 1000);
+	t =	setTimeout(() => { timer(); }, 1000);
 
 }
 
@@ -212,23 +192,27 @@ stopTimer = () => {
 resetTimer = () => {
 	seconds = 0;
 	minutes = 0;
-	displayTime.textContent = "00:00";
+	game.ui.displayTime.textContent = "00:00";
 }
 
 // If all cards have matched, display a message with the final score in a modal
-const modal = document.getElementById('myModal'),
-	cancel = document.getElementById('cancel'),
-	replay = document.getElementById('replay');
+const modal = {
+	modalOn: 0,
+	ui: {
+		myModal: document.getElementById('myModal'),
+		cross: document.getElementsByClassName('close')[0],
+		cancel: document.getElementById('cancel'),
+		replay: document.getElementById('replay'),
+		showStars: document.getElementsByClassName('showStars')[0],
+		starList: document.getElementsByClassName('stars')[0],
+		timeUsed: document.getElementsByClassName('timeUsed')[0],
+	 	movesText: document.getElementsByClassName('movesText')[0]
 
-let span = document.getElementsByClassName('close')[0],
-	modalOn = 0,
-	showStars = document.getElementsByClassName('showStars')[0],
-	starList = document.getElementsByClassName('stars')[0],
-	timeUsed = document.getElementsByClassName('timeUsed')[0],
- 	movesText = document.getElementsByClassName('movesText')[0];
+	}
+}
 
 showModal = () => {
-	if (match.length === 16) {
+	if (game.ui.match.length === 16) {
 		stopTimer();
 		printModal();
 	}
@@ -236,40 +220,34 @@ showModal = () => {
 
 //Set content of the modal
 printModal = () => {
-	modal.style.display = "block";
-	showStars.innerHTML = starList.innerHTML;
-	timeUsed.textContent = displayTime.textContent;
-	movesText.textContent = `${moveN}`;
+	modal.ui.myModal.style.display = "block";
+	modal.ui.showStars.innerHTML = modal.ui.starList.innerHTML;
+	modal.ui.timeUsed.textContent = game.ui.displayTime.textContent;
+	modal.ui.movesText.textContent = `${game.moveN}`;
 }
 
 closeModal = () => {
-	modal.style.display = "none";
+	modal.ui.myModal.style.display = "none";
 }
 
-//Close modal when click on the modal screen
-window.onclick = (e) => {
-	if (e.target == modal) {
-		closeModal();
-	}
-}
 
 //Click replay again to shuffle cards to start a new game
-replay.onclick = () => {
+modal.ui.replay.onclick = () => {
 	closeModal();
 	reset();
 }
 
 //Click cancel to close modal
-cancel.onclick = () => {
+modal.ui.cancel.onclick = () => {
 	closeModal();
 }
 
+modal.ui.cross.addEventListener('click', closeModal);
 
-container.addEventListener('click', function (evt) {
+game.ui.container.addEventListener('click', function (evt) {
 	if (evt.target.tagName === 'LI') {
 		setTimeout(flipCard(evt), 0);
 		startTimer();
-
 	setTimeout(matchCard, 0);
 	setTimeout(printMove, 500);
 	setTimeout(stars, 0);
@@ -277,5 +255,5 @@ container.addEventListener('click', function (evt) {
 	}
 });
 
-restart.addEventListener('click', reset);
-span.addEventListener('click', closeModal);
+game.ui.restart.addEventListener('click', reset);
+window.onload = reset();
